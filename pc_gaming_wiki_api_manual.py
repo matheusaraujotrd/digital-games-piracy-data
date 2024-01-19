@@ -13,7 +13,7 @@ request = rq.get(query_url)
 data = request.json()
 
 if 'cargoquery' in data and 'title' in data['cargoquery'][0]:
-    collection.insert_one(data['cargoquery'][0]['title'])
+    game_details_collection.insert_one(data['cargoquery'][0]['title'])
     print('Dados enviados com sucesso à coleção game_details.')
 else:
     print('Erro ao obter dados via PC Gaming Wiki API.')
