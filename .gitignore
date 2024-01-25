@@ -1,3 +1,9 @@
 # Excluding environment variables
 
-environ.py
+.env
+jogos_digitais_batch.json
+jogos_digitais_batch_.json
+denuvo_list.txt
+test.txt
+steam_appids_most_played.txt
+steam_most_played.txt
