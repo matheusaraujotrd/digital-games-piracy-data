@@ -1,11 +1,17 @@
 from pymongo import MongoClient
+from dotenv import load_dotenv
 import requests as rq
+import os
 import re
+load_dotenv()
+
+
+# Simple script to gather all appids from Steam.
 
 def connect_to_mongodb():
-    client = MongoClient('mongodb://localhost:27017')
-    db = client['jogos_digitais']
-    collection = db['steam_appid']
+    client = MongoClient(CONNECTION_STRING_CLOUD)
+    db = client[DB]
+    collection = db[STEAM]
     return client, collection
 
 def standardize_names(original_names, collection):
@@ -17,7 +23,7 @@ def standardize_names(original_names, collection):
     print("Nomes atualizados com sucesso no MongoDB.")
 
 def fetch_steam_data():
-    steam_url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/"
+    steam_url = f"https://api.steampowered.com/ISteamApps/GetAppList/v2/?access_token={STEAM_AK}"
     response = rq.get(steam_url)
 
     if response.status_code == 200:

@@ -1,31 +1,34 @@
 import requests as rq
 from bs4 import BeautifulSoup
 import re
+# This is just a simple script to get all games with denuvo from PC Gaming Wiki.
+# I've used this script only once.
 
-def standardize_name(name):
-    standardized_name = re.sub(r'[^a-zA-Z0-9\s]+', '', name).lower().strip()
-    return re.sub(r'\s+', ' ', standardized_name)
-
-def extract_text_list(soup, tag, class_name):
-    elements = soup.find_all(tag, class_=class_name)
-    return [element.text for element in elements]
-
-def get_records(soup, tag, class_name):
-    text_list = extract_text_list(soup, tag, class_name)
-    return [standardize_name(name) for name in text_list]
+# To update denuvo games only, prefer this script than pc_gaming_wiki_api_update, because Steam database is HUUUGE
 
 def get_denuvo_list(url):
     request = rq.get(url)
     soup = BeautifulSoup(request.content, "html.parser")
-    standardized_names = get_records(soup, "th", "table-DRM-body-game")
-    return standardized_names
+    elements = soup.find_all("th", class_="table-DRM-body-game")
+    return [element.text for element in elements]
 
-def main():
+
+def compile_denuvo():
     denuvo_url = "https://www.pcgamingwiki.com/wiki/Denuvo"
     denuvo_list = get_denuvo_list(denuvo_url)
-    
-    # Do something with the standardized names (print or save to a file, for example)
-    print("Standardized Denuvo Names:", denuvo_list)
+    return denuvo_list
+
+
+def write_to_file(denuvo_list):
+    f = open("denuvo_list.txt","w+", encoding="utf-8")
+    for game in denuvo_list:
+        f.write(f"{game}\n")
+
+
+def main():
+    denuvo_list = compile_denuvo()
+    write_to_file(denuvo_list)
+
 
 if __name__ == "__main__":
     main()
