@@ -23,9 +23,8 @@ def get_names():
     game_appids = []
     request = rq.get(f"https://api.steampowered.com/ISteamApps/GetAppList/v2/?access_token={STEAM_AK}")
     data = request.json()
-    for item in data["applist"]["apps"]:
-        game_names.append(item["name"])
-        game_appids.append(item["appid"])
+
+
     game_names = [standardize_name(name) for name in game_names]
     return game_names, game_appids
 
