@@ -1,2 +1,8 @@
-# Excluding environment variables
+# Excluding environment variables and other stuff
 .env
+
+scripts/__pycache__/
+
+/__pycache__/
+
+/mongodb_local_dump/
