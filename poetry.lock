@@ -1207,21 +1207,6 @@ files = [
 ]
 
 [[package]]
-name = "igdb-api-v4"
-version = "0.3.2"
-description = "An API wrapper for IGDB API v4"
-optional = false
-python-versions = ">=3"
-files = [
-    {file = "igdb-api-v4-0.3.2.tar.gz", hash = "sha256:8288ccdc9798fb9c12c6a42d97ad387fc99a08453eb43e62cd1d3096bf83a3ce"},
-    {file = "igdb_api_v4-0.3.2-py3-none-any.whl", hash = "sha256:b50faa2cfc3690eebdd0c21d0cdd695fefbbb61059775c05f2433e1897829efc"},
-]
-
-[package.dependencies]
-protobuf = "*"
-requests = "*"
-
-[[package]]
 name = "js2py"
 version = "0.74"
 description = "JavaScript to Python Translator & JavaScript interpreter written in 100% pure Python."
@@ -2499,4 +2484,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "5a7efcee56c01b050f0ad068f3deb85604c02a3762bf97e59055f4e22b0b5ded"
+content-hash = "c73c99af09f058d79a2fb9095d2be6b05e93e8b5f743a8e35be505d3e0f45ff1"

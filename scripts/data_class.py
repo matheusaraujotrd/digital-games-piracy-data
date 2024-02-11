@@ -5,13 +5,13 @@ class SteamData:
         self.req_appid = req_appid
 
     def get_name(self):
-        return self.req_name
+        return str(self.req_name)
     
     def get_appid(self):
-        return self.req_appid
+        return int(self.req_appid)
 
     def validate_name(self):
-        if self.req_name != None and self.req_name != "":
+        if str(self.req_name) != None and str(self.req_name) != "":
             return True
         return False
     
@@ -24,10 +24,11 @@ class SteamData:
 
 class GamingWikiData(SteamData):
     def __init__(
-        self, req_drm, opt_availability=None, opt_developer=None, 
+        self, req_name, req_std_name, req_appid, req_drm, opt_availability=None, opt_developer=None, 
         opt_genre=None, opt_monetization=None, opt_modes=None, opt_publisher=None, 
         opt_released=None, opt_released_windows=None, opt_removed_drm=None
         ):
+        super().__init__(req_name, req_std_name, req_appid)
         self.req_drm = req_drm
         self.opt_availability = opt_availability
         self.opt_developer = opt_developer
@@ -52,6 +53,7 @@ class GamingWikiData(SteamData):
             'editora': self.opt_publisher,
             'lancamento': self.opt_released,
             'lancamento_windows': self.opt_released_windows,
+            'drm_utilizada': self.req_drm,
             'drm_removida': self.opt_removed_drm
         }
 

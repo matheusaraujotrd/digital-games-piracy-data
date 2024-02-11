@@ -1,4 +1,4 @@
-# Pirataria de Jogos Digitais
+# Pirataria de Jogos Digitais [PT-BR]
 
 ## Contexto
 Este recurso foi criado durante uma iniciativa da **Dados de Fato** para uma apresentação a respeito da eficácia das travas antipirataria nos jogos de computador. Até a redação desta documentação, a análise não havia sido concluída ou publicada, mas decidi usar minha infraestrutura de dados como portfólio ainda assim.
@@ -20,7 +20,38 @@ Para conferir detalhes acerca das dependências do projeto, confira o [arquivo d
 
 ## Última atualização
 Sempre que o projeto sofrer alguma atualização significativa, incluirei uma descrição aqui, bem como no restante da documentação, conforme for necessário.
-* 30/01/2024 - Início da documentação, padronização da estrutura dos arquivos e refatoração do código.
+* 09/02/2024 - Refatoração de 66% do código original [<u>*versão 0.1.5*</u>]
+* 30/01/2024 - Início da documentação, padronização da estrutura dos arquivos e refatoração do código. [<u>*versão 0.1.0*</u>]
 
 ## Licença
 [Uso livre com atribuição](LICENSE.md).
+
+<br><br><br><br>
+# Digital Game Piracy [EN]
+## Context
+This resource was created during an initiative by **Dados de Fato** for a presentation on the effectiveness of anti-piracy measures in computer games. As of the writing of this documentation, the analysis had not been completed or published, but I decided to use my data infrastructure as a portfolio nonetheless.
+
+## Project Overview
+The project is an end-to-end data engineering service. The proposal includes:
+
+* Data ingestion through web scraping (using Selenium, BeautifulSoup, and regex techniques)
+* Storage of semi-structured data in a MongoDB cluster (via Atlas Cloud)
+* Some simple transformations occur during this stage, so this project can be seen as an ETL model (but not only)
+* Semi-structured data is transformed through Dataflow with Apache Beam
+  * This is where most of the transformations take place, making it mostly an ELT model (or a hybrid ETLT)
+* Data is sent from Dataflow to a bucket in Google Cloud Storage, already in csv format.
+* This data is transformed one last time and sent to Big Query, inserted into a Data Warehouse.
+
+Thus, we have a Data Lakehouse infrastructure done from scratch and end-to-end, using **Selenium, BeautifulSoup, MongoDB, and Google Cloud Platform (Dataflow, Cloud Storage, and Big Query)**.
+
+## Dependencies
+To check details about the project dependencies, refer to the [dependencies file](pyproject.toml).
+
+## Last Update
+Whenever the project undergoes a significant update, I will include a description here, as well as in the rest of the documentation as needed.
+
+* 09/02/2024 - Refactoring of 66% of the original code [<u>version 0.1.5</u>]
+* 30/01/2024 - Start of documentation, standardization of file structure, and code refactoring. [<u>version 0.1.0</u>]
+
+## License
+[Free to use with attribution](LICENSE.md).

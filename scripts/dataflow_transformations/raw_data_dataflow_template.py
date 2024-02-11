@@ -42,7 +42,6 @@ game_details_collection = PC_GAMING_WIKI
 cracks_collection = CRACKLIST
 
 # Define a função para realizar a junção
-# Define a função para realizar a junção
 def join_collections(element):
     key, elements = element
     steam_elements, game_details_elements, cracks_elements = elements['steam'], elements['game_details'], elements['cracks']

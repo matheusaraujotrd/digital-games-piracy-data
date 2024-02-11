@@ -43,20 +43,45 @@ def seek_and_destroy(url, variables):
             client.Close()
 
     elif url == "pc_gaming_wiki":
-        pc_gaming_wiki_collection.delete_many({})
+        n = 0
         appids = steam_collection.distinct('appid')
+        appids_used = pc_gaming_wiki_collection.distinct('appid')
         for appid in appids:
-            if pc_gaming_wiki_collection.find_one({'appid': appid}):
-            query = f'https://www.pcgamingwiki.com/w/api.php?action=cargoquery&format=json&tables=Availability,Infobox_game&fields=Infobox_game._pageName=Page,Availability.Steam_DRM,Infobox_game.Available_on,Infobox_game.Developers,Infobox_game.Genres,Infobox_game.Monetization,Infobox_game.Modes,Infobox_game.Publishers,Infobox_game.Released,Infobox_game.Released_Windows,Availability.Removed_DRM&join_on=Infobox_game._pageID=Availability._pageID&where=Infobox_game.Steam_AppID%20HOLDS%20"{appid}"'
-            try:
-                request = rq.get(query)
-                data = request.json()
-            except rq.RequestException as e:
-                logging.warning(f"Não foi possível acessar o endpoint da API: {e}")
-                continue
-            if 'title' in data['cargoquery'][0]:
-                newGamingWikiGame = GamingWikiData()
-            #if pc_gaming_wiki_collection.count_documents({}) == 0:
+            if appid not in appids_used:
+                query = f'https://www.pcgamingwiki.com/w/api.php?action=cargoquery&format=json&tables=Availability,Infobox_game&fields=Infobox_game._pageName=Page,Availability.Steam_DRM,Infobox_game.Available_on,Infobox_game.Developers,Infobox_game.Genres,Infobox_game.Monetization,Infobox_game.Modes,Infobox_game.Publishers,Infobox_game.Released,Infobox_game.Released_Windows,Availability.Removed_DRM&join_on=Infobox_game._pageID=Availability._pageID&where=Infobox_game.Steam_AppID%20HOLDS%20"{appid}"'
+                try:
+                    request = rq.get(query)
+                    data = request.json()
+                except rq.RequestException as e:
+                    logging.warning(f"Não foi possível acessar o endpoint da API: {e}")
+                    continue
+                try:
+                    if 'title' in data['cargoquery'][0]:
+                        # Create a new GamingWikiData object with attributes based on values from the 'title' key
+                        newGameDetails = GamingWikiData(
+                            data['cargoquery'][0]['title'].get('Page'),
+                            standardize_name(data['cargoquery'][0]['title'].get('Page')),
+                            appid,
+                            data['cargoquery'][0]['title'].get('Steam DRM'),
+                            data['cargoquery'][0]['title'].get('Available on'),
+                            data['cargoquery'][0]['title'].get('Developers'),
+                            data['cargoquery'][0]['title'].get('Genres'),
+                            data['cargoquery'][0]['title'].get('Monetization'),
+                            data['cargoquery'][0]['title'].get('Modes'),
+                            data['cargoquery'][0]['title'].get('Publishers'),
+                            data['cargoquery'][0]['title'].get('Released'),
+                            data['cargoquery'][0]['title'].get('Released Windows'),
+                            data['cargoquery'][0]['title'].get('Removed DRM')
+                        )
+                        # Print the document representation of the new object
+                        n+= 1
+                        logging.info(f"{newGameDetails.get_name()} adicionado.\n{n} jogo(s) adicionados.")
+                        pc_gaming_wiki_collection.insert_one(newGameDetails.to_document())
+
+                except IndexError:
+                    logging.info("Erro de índice, pulando...")
+            else:
+                logging.info(f"Jogo {appid} já está no banco de dados. Pulando...")
                 
 
 
