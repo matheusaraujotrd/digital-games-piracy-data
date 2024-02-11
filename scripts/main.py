@@ -1,21 +1,18 @@
-import util
+from util import load_variables
 import scrapper
 
-if __name__ == "__main__":
-
-
-    logging.basicConfig(level=logging.INFO)
-    util.load_variables()
-
-
-    sites = (
-        "steam",
-        "pc_gaming_wiki",
-        "gamestatus"
+# Setting up logs
+logging.getLogger('DGP')
+logging_config = logging.basicConfig(
+    filename ="../logs.txt",
+    level=logging.INFO
     )
 
-    for site in sites:
-        scrapper.seek_and_destroy(site)
+# Load environment variables
+variables = load_variables()
+
+logging.info(f'Iniciando scraping das fontes')
+scrapper.run(variables, logging_config)
 
 
 

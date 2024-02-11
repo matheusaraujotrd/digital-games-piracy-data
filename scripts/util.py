@@ -4,7 +4,8 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 
-def load_variables():
+# Environment variables loader
+def load_variables() -> dict:
     load_dotenv()
     return {
         'CONNECTION_STRING_CLOUD': os.getenv('CONNECTION_STRING_CLOUD'),
@@ -21,6 +22,8 @@ def load_variables():
         'TWITCH_SECRET': os.getenv('TWITCH_SECRET')
     }
 
-def standardize_name(name):
+
+# All around function to standardize names
+def standardize_name(name) -> str:
     standardized_name = re.sub(r'[^a-zA-Z0-9\s]+', '', name).lower().strip()
     return re.sub(r'\s+', ' ', standardized_name)

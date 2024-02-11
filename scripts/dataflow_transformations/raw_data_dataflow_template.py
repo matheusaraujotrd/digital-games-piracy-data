@@ -72,19 +72,19 @@ class ConvertToPandasDataFrame(beam.DoFn):
 colecao_steam = (
     p
     | 'ReadCollectionSteam' >> ReadFromMongoDB(uri=mongo_uri, db=db, coll=steam_collection, bucket_auto=True)
-    | 'Mapping names from Steam' >> beam.Map(lambda record: (record["name"], record))
+    | 'Mapping names from Steam' >> beam.Map(lambda record: (record['name'], record))
 )
 
 colecao_game_details = (
     p
     | 'ReadCollectionGameDetails' >> ReadFromMongoDB(uri=mongo_uri, db=db, coll=game_details_collection, bucket_auto=True)
-    | 'Mapping names from Game Details' >> beam.Map(lambda record: (record["name"], record))
+    | 'Mapping names from Game Details' >> beam.Map(lambda record: (record['name'], record))
 )
 
 colecao_cracks = (
     p
     | 'ReadCollectionCracks' >> ReadFromMongoDB(uri=mongo_uri, db=db, coll=cracks_collection, bucket_auto=True)
-    | 'Mapping names from Cracks' >> beam.Map(lambda record: (record["name"], record))
+    | 'Mapping names from Cracks' >> beam.Map(lambda record: (record['name'], record))
 )
 
 # Junção das coleções usando CoGroupByKey

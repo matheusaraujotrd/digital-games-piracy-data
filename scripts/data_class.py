@@ -1,27 +1,30 @@
+# Base class. Used on Steam source.
 class SteamData:
     def __init__(self, req_name, req_std_name, req_appid):
         self.req_name = req_name
         self.req_std_name = req_std_name
         self.req_appid = req_appid
 
-    def get_name(self):
+    def get_name(self) -> str:
         return str(self.req_name)
     
-    def get_appid(self):
+    def get_appid(self) -> int:
         return int(self.req_appid)
 
-    def validate_name(self):
-        if str(self.req_name) != None and str(self.req_name) != "":
+    def validate_name(self) -> bool:
+        if str(self.req_name) != None and str(self.req_name) != '':
             return True
         return False
     
-    def to_document(self):
+
+    def to_document(self) -> JSON:
         return {
             'appid': self.req_appid,
             'nome': self.req_name,
             'pdr_nome': self.req_std_name
         }
 
+# Intermediary source. Used on PC Gaming Wiki source.
 class GamingWikiData(SteamData):
     def __init__(
         self, req_name, req_std_name, req_appid, req_drm, opt_availability=None, opt_developer=None, 
@@ -40,7 +43,8 @@ class GamingWikiData(SteamData):
         self.opt_released_windows = opt_released_windows
         self.opt_removed_drm = opt_removed_drm
 
-    def to_document(self):
+
+    def to_document(self) -> JSON:
         return {
             'appid': self.req_appid,
             'nome': self.req_name,
@@ -57,11 +61,13 @@ class GamingWikiData(SteamData):
             'drm_removida': self.opt_removed_drm
         }
 
+# Final source (so far?). Used to gather final data regarding crack status.
 class StatusData(GamingWikiData):
     def __init__(self, req_crack_status, req_crack_team, req_drm_crack, req_release_date, req_dates_dif, opt_crack_date=None):
         pass
+    
 
-    def to_document(self):
+    def to_document(self) -> JSON:
         return {
             'appid': self.req_appid,
             'nome': self.req_name,

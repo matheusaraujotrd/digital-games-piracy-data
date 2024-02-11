@@ -36,7 +36,7 @@ The project is an end-to-end data engineering service. The proposal includes:
 
 * Data ingestion through web scraping (using Selenium, BeautifulSoup, and regex techniques)
 * Storage of semi-structured data in a MongoDB cluster (via Atlas Cloud)
-* Some simple transformations occur during this stage, so this project can be seen as an ETL model (but not only)
+  * Some simple transformations occur during this stage, so this project can be seen as an ETL model (but not only)
 * Semi-structured data is transformed through Dataflow with Apache Beam
   * This is where most of the transformations take place, making it mostly an ELT model (or a hybrid ETLT)
 * Data is sent from Dataflow to a bucket in Google Cloud Storage, already in csv format.
