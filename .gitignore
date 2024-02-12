@@ -1,4 +1,4 @@
-# Excluding environment variables and other stuff
+# Excluding environment variables
 .env
 
 scripts/__pycache__/
