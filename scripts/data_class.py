@@ -17,7 +17,7 @@ class SteamData:
         return False
     
 
-    def to_document(self) -> JSON:
+    def to_document(self):
         return {
             'appid': self.req_appid,
             'nome': self.req_name,
@@ -44,7 +44,7 @@ class GamingWikiData(SteamData):
         self.opt_removed_drm = opt_removed_drm
 
 
-    def to_document(self) -> JSON:
+    def to_document(self):
         return {
             'appid': self.req_appid,
             'nome': self.req_name,
@@ -67,7 +67,7 @@ class StatusData(GamingWikiData):
         pass
     
 
-    def to_document(self) -> JSON:
+    def to_document(self):
         return {
             'appid': self.req_appid,
             'nome': self.req_name,

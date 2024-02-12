@@ -6,6 +6,7 @@ import requests as rq
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
 from selenium import webdriver
+from bson.objectid import ObjectId
 from pymongo.errors import PyMongoError
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -14,25 +15,27 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service as ChromeService
 
+# Global logging service
+logger = logging.getLogger("DCP")
 
 # Connecting to MongoDB Atlas Cloud
 def connecting_to_client(c_string):
     client = MongoClient(c_string)
-    logging.info('Conectado ao cliente MongoDB')
+    logger.info('Conectado ao cliente MongoDB')
     return client
 
 
 # Connecting to MongoDB database
 def connecting_to_database(client, database):
     db = client[database]
-    logging.info('Conectado ao banco de dados MongoDB')
+    logger.info('Conectado ao banco de dados MongoDB')
     return db
 
 
 # Connecting to required collection
 def connecting_to_collection(database, coll):
     collection = database[coll]
-    logging.info('Conectado à coleção solicitada.')
+    logger.info('Conectado à coleção solicitada.')
     return collection
 
 
@@ -41,18 +44,26 @@ def kill_connection(client) -> None:
     try:
         client.close()
     except PyMongoError as e:
-        logging.error(f"Erro ao encerrar conexão MongoDB: {e}")
-    logging.info("Conexão com o MongoDB encerrada.")
+        logger.error(f"Erro ao encerrar conexão MongoDB: {e}")
+    logger.info("Conexão com o MongoDB encerrada.")
 
 
 # Main scraping function
-def run(variables: dict, logging_config) -> None:
+def run(variables: dict, logger, Steam=False, Gaming_Wiki=False, Game_Status=False) -> None:
     mongo_client = connecting_to_client(variables['CONNECTION_STRING_CLOUD'])
     mongo_db = connecting_to_database(mongo_client, variables['DB'])
 
-    scrape_steam(mongo_db, variables)
-    scrape_pc_gaming_wiki(mongo_db, variables)
+    if Steam:
+        scrape_steam(mongo_db, variables)
+    
+    if Gaming_Wiki:
+        scrape_pc_gaming_wiki(mongo_db, variables)
+    
+    if Game_Status:
+        pass
+
     kill_connection(mongo_client)
+    logging.shutdown()
 
 
 def scrape_steam(database, variables):
@@ -60,7 +71,7 @@ def scrape_steam(database, variables):
     # Booting MongoDB connections
     steam_collection = connecting_to_collection(database, variables['STEAM'])
 
-    logging.info(steam_collection.count_documents({}))
+    logger.info(steam_collection.count_documents({}))
     request = rq.get(f"https://api.steampowered.com/ISteamApps/GetAppList/v2/?access_token={variables['STEAM_AK']}")
 
     # Checking if request was successful
@@ -77,18 +88,18 @@ def scrape_steam(database, variables):
                     item['appid'])
                 # Validating if the name is not empty and then adding the game to collection
                 if newGame.validate_name():
-                    logging.info(f'{newGame.get_name()} (appid {newGame.get_appid()}) coletado!')
+                    logger.info(f'{newGame.get_name()} (appid {newGame.get_appid()}) coletado!')
                     steam_collection.insert_one(newGame.to_document())
         else:
             # If collection is not empty, first checks if the game is already into collection before adding it
             for item in data['applist']['apps']:
                 newGame = SteamData(item['name'], standardize_name(item['name']), item['appid'])
                 if steam_collection.find_one({'appid': newGame.get_appid}) is None and newGame.validate_name():
-                    logging.info(f'{newGame.get_name()} (appid {newGame.get_appid()}) coletado!')
+                    logger.info(f'{newGame.get_name()} (appid {newGame.get_appid()}) coletado!')
                     steam_collection.insert_one(newGame.to_document())
 
     else:
-        logging.error('Falha em contatar a API steam...')
+        logger.error('Falha em contatar a API steam...')
         return
 
 
@@ -98,8 +109,10 @@ def scrape_pc_gaming_wiki(database, variables):
     steam_collection = connecting_to_collection(database, variables['STEAM'])
     gaming_wiki_collection = connecting_to_collection(database, variables["PC_GAMING_WIKI"])
 
+    retries = 0
     n1 = 0
     n2 = 0
+
     appids = steam_collection.distinct('appid')
     appids_used = gaming_wiki_collection.distinct('appid')
     # Iterating over available games on steam collection
@@ -130,9 +143,14 @@ def scrape_pc_gaming_wiki(database, variables):
                 request = rq.get(query)
                 data = request.json()
             except rq.RequestException as e:
-                logging.error(f'Não foi possível acessar o endpoint da API: {e}')
-                return
+                logger.error(f'Não foi possível acessar o endpoint da API: {e}')
+                retries += 1
+                logger.info(f"Tentativa número {retries}. O sistema desligará após 3 tentativas seguidas.")
+                if retries == 3:
+                    return
+
             try:
+                retries = 0
                 # Checking if the game has data on PC Gaming Wiki, then adding to collection
                 if 'title' in data['cargoquery'][0]:
                         
@@ -154,10 +172,12 @@ def scrape_pc_gaming_wiki(database, variables):
                     )
                         
                     n2+= 1
-                    logging.info(f'{newGameDetails.get_name()} adicionado.\n{n1} jogo(s) analisados, {n2} jogo(s) adicionados.')
+                    logger.info(f'{newGameDetails.get_name()} adicionado.\n{n1} jogo(s) analisados, {n2} jogo(s) adicionados.')
                     gaming_wiki_collection.insert_one(newGameDetails.to_document())
 
             except IndexError:
-                logging.warning(f'Erro de índice, próximo jogo...\n{n1} jogo(s) analisados.')
+                game = steam_collection.find_one({'appid': appid})
+                logger.warning(f'Nenhum dado encontrado para o jogo {appid} - {game["nome"]}...\n{n1} jogo(s) analisados.')
         else:
-            logging.info(f'Jogo {appid} já está no banco de dados. Próximo jogo...\n{n1} jogo(s) analisados.')
+            game = gaming_wiki_collection.find_one({'appid': appid})
+            logger.info(f'Jogo {appid} - {game["nome"]} já está no banco de dados. Próximo jogo...\n{n1} jogo(s) analisados.')
