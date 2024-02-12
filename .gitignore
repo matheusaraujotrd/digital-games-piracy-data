@@ -5,6 +5,6 @@ scripts/__pycache__/
 
 /__pycache__/
 
-/mongodb_local_dump/
-
 logs.log
+
+/mongodb_local_dump/
