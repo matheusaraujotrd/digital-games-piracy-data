@@ -20,6 +20,8 @@ Para conferir detalhes acerca das dependências do projeto, confira o [arquivo d
 
 ## Última atualização
 Sempre que o projeto sofrer alguma atualização significativa, incluirei uma descrição aqui, bem como no restante da documentação, conforme for necessário.
+
+* 15/02/2024 - Correção de bugs. [<u>*version 0.2.1*</u>]
 * 14/02/2024 - Primeira refatoração do código concluída. Pipeline completa até a aquisição final de dados.<br>A próxima etapa é a refatoração da transformação via Dataflow e posterior armazenamento de dados.<br>A proposta final é um consumo menor do Dataflow e, dessa forma, economizar gastos. [<u>*versão 0.2.0*</u>]
 * 09/02/2024 - Refatoração de 66% do código original [<u>*versão 0.1.5*</u>]
 * 30/01/2024 - Início da documentação, padronização da estrutura dos arquivos e refatoração do código. [<u>*versão 0.1.0*</u>]
@@ -51,6 +53,7 @@ To check details about the project dependencies, refer to the [dependencies file
 ## Last Update
 Whenever the project undergoes a significant update, I will include a description here, as well as in the rest of the documentation as needed.
 
+* 15/02/2024 - Minor bug fixes. [<u>*version 0.2.1*</u>]
 * 14/02/2024 - First code refactoring completed. Full pipeline up to the final data acquisition ready.<br>The next step is the refactoring of the transformation via Dataflow and subsequent data storage.<br>The final goal is to reduce Dataflow consumption and, thus, save costs. [<u>*version 0.2.0*</u>]
 * 09/02/2024 - Refactoring of 66% of the original code [<u>version 0.1.5</u>]
 * 30/01/2024 - Start of documentation, standardization of file structure, and code refactoring. [<u>version 0.1.0</u>]
