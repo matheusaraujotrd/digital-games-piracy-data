@@ -20,6 +20,7 @@ Para conferir detalhes acerca das dependências do projeto, confira o [arquivo d
 
 ## Última atualização
 Sempre que o projeto sofrer alguma atualização significativa, incluirei uma descrição aqui, bem como no restante da documentação, conforme for necessário.
+* 14/02/2024 - Primeira refatoração do código concluída. Pipeline completa até a aquisição final de dados.<br>A próxima etapa é a refatoração da transformação via Dataflow e posterior armazenamento de dados.<br>A proposta final é um consumo menor do Dataflow e, dessa forma, economizar gastos. [<u>*versão 0.2.0*</u>]
 * 09/02/2024 - Refatoração de 66% do código original [<u>*versão 0.1.5*</u>]
 * 30/01/2024 - Início da documentação, padronização da estrutura dos arquivos e refatoração do código. [<u>*versão 0.1.0*</u>]
 
