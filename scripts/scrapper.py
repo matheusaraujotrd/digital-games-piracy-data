@@ -226,7 +226,7 @@ def parse_steam_cracked_games_html(url):
     except rq.exceptions.RequestException as e:
         logger.error(f"Algo ocorreu com a solicitação: {e}")
         return None
-        
+
     soup = BeautifulSoup(request.content, 'html.parser')
     dl_element = soup.find('dl', class_='row')
 
@@ -255,11 +255,12 @@ def check_steam_cracked_data(document, data, cracks_collection):
     if data is None:
         logger.warning(f"{document['nome']} não foi encontrado na S1: Steam Cracked Games!")
         return
-    document['crack_team'] = data[1]
-    document['data_crack'] = data[2]
-    document['drm_cracked'] = data[3]
-    document['crack_status'] = data[4]
+    document['crack_team'] = data[1] if len(data) > 1 else None
+    document['data_crack'] = data[2] if len(data) > 2 else None
+    document['drm_cracked'] = data[3] if len(data) > 3 else None
+    document['crack_status'] = data[4] if len(data) > 4 else None
     document['source1'] = True
     cracks_collection.insert_one(document)
     logger.info(f'{document["nome"]} foi adicionado à coleção de cracks!') 
+    
     
