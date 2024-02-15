@@ -51,6 +51,7 @@ To check details about the project dependencies, refer to the [dependencies file
 ## Last Update
 Whenever the project undergoes a significant update, I will include a description here, as well as in the rest of the documentation as needed.
 
+* 14/02/2024 - First code refactoring completed. Full pipeline up to the final data acquisition ready.<br>The next step is the refactoring of the transformation via Dataflow and subsequent data storage.<br>The final goal is to reduce Dataflow consumption and, thus, save costs. [<u>*version 0.2.0*</u>]
 * 09/02/2024 - Refactoring of 66% of the original code [<u>version 0.1.5</u>]
 * 30/01/2024 - Start of documentation, standardization of file structure, and code refactoring. [<u>version 0.1.0</u>]
 
