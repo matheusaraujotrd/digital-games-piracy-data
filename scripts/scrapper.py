@@ -218,7 +218,15 @@ def scrape_steam_cracked_games(database, variables):
 
 
 def parse_steam_cracked_games_html(url):
-    request = rq.get(url)
+
+
+    try:
+        request = rq.get(url)
+        request.raise_for_status()  # This will raise an HTTPError for bad responses (4xx and 5xx)
+    except rq.exceptions.RequestException as e:
+        logger.error(f"Algo ocorreu com a solicitação: {e}")
+        return None
+        
     soup = BeautifulSoup(request.content, 'html.parser')
     dl_element = soup.find('dl', class_='row')
 
