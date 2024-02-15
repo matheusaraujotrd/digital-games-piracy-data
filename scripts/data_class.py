@@ -60,31 +60,3 @@ class GamingWikiData(SteamData):
             'drm_utilizada': self.req_drm,
             'drm_removida': self.opt_removed_drm
         }
-
-# Final source (so far?). Used to gather final data regarding crack status.
-class StatusData(GamingWikiData):
-    def __init__(self, req_crack_status, req_crack_team, req_drm_crack, req_release_date, req_dates_dif, opt_crack_date=None):
-        pass
-    
-
-    def to_document(self):
-        return {
-            'appid': self.req_appid,
-            'nome': self.req_name,
-            'pdr_nome': self.req_std_name,
-            'disponivel': self.opt_availability,
-            'desenvolvedor': self.opt_developer,
-            'genero': self.opt_genre,
-            'monetizacao': self.opt_monetization,
-            'modos': self.opt_modes,
-            'editora': self.opt_publisher,
-            'lancamento': self.opt_released,
-            'lancamento_windows': self.opt_released_windows,
-            'drm_removida': self.opt_removed_drm,
-            'sit_crack': self.req_crack_status,
-            'equipe_crack': self.req_crack_team,
-            'drm_crack': self.req_drm_crack,
-            'lancamento': self.req_release_date,
-            'dates_dif': self.req_dates_dif,
-            'data_crack': self.opt_crack_date
-        }

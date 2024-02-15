@@ -22,7 +22,7 @@ logger.addHandler(sth)
 variables = util.load_variables()
 
 logger.info('Iniciando scraping das fontes')
-scrapper.run(variables, logger, False, True, False)
+scrapper.run(variables, logger, False, False, True)
 
 
 

@@ -1,4 +1,4 @@
-from data_class import SteamData, GamingWikiData, StatusData
+from data_class import SteamData, GamingWikiData
 from util import load_variables, standardize_name
 
 import logging
@@ -49,7 +49,8 @@ def kill_connection(client) -> None:
 
 
 # Main scraping function
-def run(variables: dict, logger, Steam=False, Gaming_Wiki=False, Game_Status=False) -> None:
+##################################################################################################################################################
+def run(variables: dict, logger, Steam=False, Gaming_Wiki=False, Steam_cracked_games=False) -> None:
     mongo_client = connecting_to_client(variables['CONNECTION_STRING_CLOUD'])
     mongo_db = connecting_to_database(mongo_client, variables['DB'])
 
@@ -59,12 +60,12 @@ def run(variables: dict, logger, Steam=False, Gaming_Wiki=False, Game_Status=Fal
     if Gaming_Wiki:
         scrape_pc_gaming_wiki(mongo_db, variables)
     
-    if Game_Status:
-        pass
+    if Steam_cracked_games:
+        scrape_steam_cracked_games(mongo_db, variables)
 
     kill_connection(mongo_client)
     logging.shutdown()
-
+##################################################################################################################################################
 
 def scrape_steam(database, variables):
         
@@ -181,3 +182,76 @@ def scrape_pc_gaming_wiki(database, variables):
         else:
             game = gaming_wiki_collection.find_one({'appid': appid})
             logger.info(f'Jogo {appid} - {game["nome"]} já está no banco de dados. Próximo jogo...\n{n1} jogo(s) analisados.')
+
+
+def scrape_steam_cracked_games(database, variables):
+
+    # Source1 - Steam Cracked Games
+
+    # Booting MongoDB connection
+    gaming_wiki_collection = connecting_to_collection(database, variables["PC_GAMING_WIKI"])
+    cracks_collection = connecting_to_collection(database, variables['CRACKLIST'])
+
+    for document in gaming_wiki_collection.find():
+        slug = document["pdr_nome"].replace(" ", "-")
+        url = f'https://steamcrackedgames.com/games/'
+        appid = document['appid']
+        cracks_document = cracks_collection.find_one({'appid': appid})
+
+    
+        # Fetch the URL only once and store it in a variable
+
+        full_url = f'{url}{slug}'
+
+        if cracks_document is None:
+            # Use the stored URL in the parse function
+            data = parse_steam_cracked_games_html(full_url)
+            check_steam_cracked_data(document, data, cracks_collection)
+        else:
+            if 'source1' in cracks_document:
+                logger.info(f"{document['nome']} já existe na seleção e alguma fonte já foi verificada.")
+            else:
+                # Use the stored URL in the parse function
+                data = parse_steam_cracked_games_html(full_url)
+                check_steam_cracked_data(document, data, cracks_collection)
+                
+
+
+def parse_steam_cracked_games_html(url):
+    request = rq.get(url)
+    soup = BeautifulSoup(request.content, 'html.parser')
+    dl_element = soup.find('dl', class_='row')
+
+    if dl_element is None:
+        return None
+
+    data = []
+    span_labels = ["Name:", "Nome:", "Data do Hack:", "Cracked by:", "Crackeado por:", "Crack date:", "DRM Protection:", "Proteção DRM:"]
+    span_elements = dl_element.find_all('span')
+    a_elements = dl_element.find_all('a')
+
+    for i, span in enumerate(span_elements):
+        # Check if the span element has data_label and there is a next sibling
+        if span.text.strip() in span_labels and i + 1 < len(span_elements):
+            next_span = span_elements[i + 1]
+            data.append(next_span.text.strip())
+
+    for a in a_elements:
+        if '/games/' in a['href']:
+            data.append(a.text.strip().lower())
+
+    return data
+
+
+def check_steam_cracked_data(document, data, cracks_collection):
+    if data is None:
+        logger.warning(f"{document['nome']} não foi encontrado na S1: Steam Cracked Games!")
+        return
+    document['crack_team'] = data[1]
+    document['data_crack'] = data[2]
+    document['drm_cracked'] = data[3]
+    document['crack_status'] = data[4]
+    document['source1'] = True
+    cracks_collection.insert_one(document)
+    logger.info(f'{document["nome"]} foi adicionado à coleção de cracks!') 
+    
