@@ -255,6 +255,8 @@ def check_steam_cracked_data(document, data, cracks_collection):
     if data is None:
         logger.warning(f"{document['nome']} não foi encontrado na S1: Steam Cracked Games!")
         return
+    if len(data) < 5:
+        logger.warning(f"Algo ocorreu ao coletar dados para o jogo {document['nome']}.")
     document['crack_team'] = data[1] if len(data) > 1 else None
     document['data_crack'] = data[2] if len(data) > 2 else None
     document['drm_cracked'] = data[3] if len(data) > 3 else None
